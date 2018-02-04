@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id "com.github.johnrengelman.shadow" version "2.0.1"
+}
+
+group 'hexGraph-sink-connector'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+ext {
+    apacheCommonsVersion = '3.7'
+    apacheCommonsIoVersion = '2.6'
+    slf4jVersion = '1.7.25'
+    log4jVersion = '2.10.0'
+    kafkaVersion = '1.0.0'
+
+    jUnitVersion = '3.8.2'
+}
+
+dependencies {
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+    implementation "commons-io:commons-io:${apacheCommonsIoVersion}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    implementation "org.apache.kafka:kafka_2.12:${kafkaVersion}"
+    implementation "org.apache.kafka:connect-api:${kafkaVersion}"
+
+    testImplementation "junit:junit:${jUnitVersion}"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1' //version required
+}
