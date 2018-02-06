@@ -36,26 +36,30 @@ public class HexGraphSinkTask extends SinkTask {
         LOGGER.info("Hex graph sink task starting.");
 
         directorySink = props.get(DIRECTORY_SINK);
+
+        File directory = new File(directorySink);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
     }
 
     @Override
     public void put(Collection<SinkRecord> records) {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             for (SinkRecord sinkRecord : records) {
-                HexGraphResult hexGraphResult = new ObjectMapper().readValue(sinkRecord.value().toString(), HexGraphResult.class);
+                HexGraphResult hexGraphResult = objectMapper.readValue(sinkRecord.value().toString(), HexGraphResult.class);
 
-                LocalDateTime creationDate = Optional.of(hexGraphResult.getCreationDate()).orElse(LocalDateTime.now());
+                String creationDate = Optional.of(hexGraphResult.getCreationDate()).orElse(LocalDateTime.now().toString());
                 String imagePath = hexGraphResult.getImagePath();
 
                 String fileName = directorySink + "/" + creationDate;
-                File file = new File(fileName);
-                if (!file.exists()) {
-                    file.mkdir();
-                }
+
+                HexGraphFileContent hexGraphFileContent = new HexGraphFileContent(imagePath, hexGraphResult.getCounts());
 
                 FileOutputStream fos = new FileOutputStream(fileName);
                 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-                outStream.writeUTF(imagePath);
+                outStream.writeUTF(objectMapper.writeValueAsString(hexGraphFileContent));
                 outStream.close();
             }
         } catch (IOException e) {

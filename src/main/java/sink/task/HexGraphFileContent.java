@@ -1,21 +1,19 @@
 package sink.task;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
-public class HexGraphResult {
+public class HexGraphFileContent {
     private String imagePath;
-
-    private String creationDate;
 
     private Map<String, Integer> counts;
 
-    public String getImagePath() {
-        return imagePath;
+    public HexGraphFileContent(String imagePath, Map<String, Integer> counts) {
+        this.imagePath = imagePath;
+        this.counts = counts;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getImagePath() {
+        return imagePath;
     }
 
     public Map<String, Integer> getCounts() {
@@ -24,9 +22,8 @@ public class HexGraphResult {
 
     @Override
     public String toString() {
-        return "HexGraphResult{" +
+        return "HexGraphFileContent{" +
                 "imagePath='" + imagePath + '\'' +
-                ", creationDate=" + creationDate +
                 ", counts=" + counts +
                 '}';
     }
