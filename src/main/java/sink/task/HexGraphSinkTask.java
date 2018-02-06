@@ -45,9 +45,13 @@ public class HexGraphSinkTask extends SinkTask {
 
     @Override
     public void put(Collection<SinkRecord> records) {
+        LOGGER.info("$$$$$$$$$ PUTTING $$$$$$$$$$$$$$");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             for (SinkRecord sinkRecord : records) {
+                LOGGER.info("!!!!!!!!!!!!!!");
+                LOGGER.info(sinkRecord.value().toString());
+
                 HexGraphResult hexGraphResult = objectMapper.readValue(sinkRecord.value().toString(), HexGraphResult.class);
 
                 String creationDate = Optional.of(hexGraphResult.getCreationDate()).orElse(LocalDateTime.now().toString());
@@ -57,6 +61,7 @@ public class HexGraphSinkTask extends SinkTask {
 
                 HexGraphFileContent hexGraphFileContent = new HexGraphFileContent(imagePath, hexGraphResult.getCounts());
 
+                LOGGER.info(fileName + "::::: " + hexGraphFileContent.toString());
                 FileOutputStream fos = new FileOutputStream(fileName);
                 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
                 outStream.writeUTF(objectMapper.writeValueAsString(hexGraphFileContent));
