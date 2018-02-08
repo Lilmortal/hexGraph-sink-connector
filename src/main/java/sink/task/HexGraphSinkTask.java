@@ -48,11 +48,12 @@ public class HexGraphSinkTask extends SinkTask {
         LOGGER.info("$$$$$$$$$ PUTTING $$$$$$$$$$$$$$");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+
             for (SinkRecord sinkRecord : records) {
                 LOGGER.info("!!!!!!!!!!!!!!");
-                LOGGER.info(sinkRecord.value().toString());
 
-                HexGraphResult hexGraphResult = objectMapper.readValue(sinkRecord.value().toString(), HexGraphResult.class);
+                HexGraphResult hexGraphResult = objectMapper.readValue(objectMapper.writeValueAsString(sinkRecord.value()),
+                        HexGraphResult.class);
 
                 String creationDate = Optional.of(hexGraphResult.getCreationDate()).orElse(LocalDateTime.now().toString());
                 String imagePath = hexGraphResult.getImagePath();
