@@ -1,8 +1,12 @@
 package sink.task;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
+import org.apache.kafka.connect.sink.SinkTaskContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sink.connector.HexGraphSinkConnector;
@@ -45,27 +49,19 @@ public class HexGraphSinkTask extends SinkTask {
 
     @Override
     public void put(Collection<SinkRecord> records) {
-        LOGGER.info("$$$$$$$$$ PUTTING $$$$$$$$$$$$$$");
         try {
             ObjectMapper objectMapper = new ObjectMapper();
 
             for (SinkRecord sinkRecord : records) {
-                LOGGER.info("!!!!!!!!!!!!!!");
-
-                HexGraphResult hexGraphResult = objectMapper.readValue(objectMapper.writeValueAsString(sinkRecord.value()),
+                HexGraphResult hexGraphResult = objectMapper.readValue(sinkRecord.value().toString(),
                         HexGraphResult.class);
 
                 String creationDate = Optional.of(hexGraphResult.getCreationDate()).orElse(LocalDateTime.now().toString());
-                String imagePath = hexGraphResult.getImagePath();
-
                 String fileName = directorySink + "/" + creationDate;
 
-                HexGraphFileContent hexGraphFileContent = new HexGraphFileContent(imagePath, hexGraphResult.getCounts());
-
-                LOGGER.info(fileName + "::::: " + hexGraphFileContent.toString());
                 FileOutputStream fos = new FileOutputStream(fileName);
                 DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
-                outStream.writeUTF(objectMapper.writeValueAsString(hexGraphFileContent));
+                outStream.writeChars(objectMapper.writeValueAsString(hexGraphResult));
                 outStream.close();
             }
         } catch (IOException e) {
